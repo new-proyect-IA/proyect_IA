@@ -1,9 +1,9 @@
 import { useState } from "react"
-import GptMessage from "../../components/chat-bubbles/GptMessage"
-import MyMessage from "../../components/chat-bubbles/MyMessage"
-import TextMessageBox from "../../components/chat-input-boxes/TextMessageBox"
-import TypingLoader from "../../components/loaders/TypingLoader"
-import TextMessageBoxFile from "../../components/chat-input-boxes/TextMessageBoxFile"
+import GptMessage from "../components/chat-bubbles/GptMessage"
+import MyMessage from "../components/chat-bubbles/MyMessage"
+import TextMessageBox from "../components/chat-input-boxes/TextMessageBox"
+import TypingLoader from "../components/loaders/TypingLoader"
+
 
 
 interface Message {
@@ -12,7 +12,7 @@ interface Message {
 }
 
 
-const OrthographyPage = () => {
+const ChatTemplate = () => {
 
   const [Isloading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
@@ -62,18 +62,14 @@ const handlePost = async ( text: string) =>  {
 |     
       { /* componente para el texto del usuario */}
 
-      {/* <TextMessageBox
+      <TextMessageBox
         onSendMessage={ handlePost }
         placeholder="Escribe tu texto"
         disableCorrections
-      /> */}
-      <TextMessageBoxFile
-        onSendMessage={ handlePost }
-        placeholder="Escribe tu texto"
       />
 
     </div>
   )
 }
 
-export default OrthographyPage
+export default ChatTemplate
