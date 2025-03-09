@@ -62,15 +62,15 @@ const handlePost = async ( text: string) =>  {
 |     
       { /* componente para el texto del usuario */}
 
-      {/* <TextMessageBox
+      <TextMessageBox
         onSendMessage={ handlePost }
         placeholder="Escribe tu texto"
         disableCorrections
-      /> */}
-      <TextMessageBoxFile
+      />
+      {/* <TextMessageBoxFile
         onSendMessage={ handlePost }
         placeholder="Escribe tu texto"
-      />
+      /> */}
 
     </div>
   )
