@@ -3,12 +3,18 @@ import GptMessage from "../../components/chat-bubbles/GptMessage"
 import MyMessage from "../../components/chat-bubbles/MyMessage"
 import TextMessageBox from "../../components/chat-input-boxes/TextMessageBox"
 import TypingLoader from "../../components/loaders/TypingLoader"
-import TextMessageBoxFile from "../../components/chat-input-boxes/TextMessageBoxFile"
+import { orthographyUseCase } from "../../../core/use-case"
+import GptOrthographyMessage from "../../components/chat-bubbles/GptOrtographyMessage"
 
 
 interface Message {
   text: string
   isGpt: boolean
+  info?:{
+    userScore: number
+    errors: string[]
+    message: string
+  }
 }
 
 
@@ -22,6 +28,22 @@ const handlePost = async ( text: string) =>  {
   setMessages( (prev) => [...prev, { text: text, isGpt: false}])
 
   //TODO UseCAse
+
+  const { ok, errors, message, userScore } = await orthographyUseCase(text)
+
+  if ( !ok ){
+    setMessages( (prev) => [...prev, { text: 'No se pudo realizar la corrección', isGpt: true}])
+  } else {
+    setMessages( (prev) => [...prev, {
+      text: message,
+      isGpt: true,
+      info:{
+        errors: errors,
+        message:message,
+        userScore: userScore
+      }
+    }])
+  }
 
   setIsLoading(false)
 
@@ -42,7 +64,12 @@ const handlePost = async ( text: string) =>  {
             messages.map( (message, index) => (
               message.isGpt
                 ? (
-                  <GptMessage key={ index } text='Text de OpenIA' />
+                  <GptOrthographyMessage
+                    key={ index }
+                    errors={ message.info!.errors }
+                    message={ message.info!.message }
+                    userScore={ message.info!.userScore}
+                  />
                 )
                 : (
                   <MyMessage key={ index } text={ message.text } />
