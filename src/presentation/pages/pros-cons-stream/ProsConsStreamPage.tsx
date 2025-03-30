@@ -1,11 +1,12 @@
 
 
-import { useState } from "react"
+import { useRef, useState } from "react"
 import GptMessage from "../../components/chat-bubbles/GptMessage"
 import MyMessage from "../../components/chat-bubbles/MyMessage"
 import TextMessageBox from "../../components/chat-input-boxes/TextMessageBox"
 import TypingLoader from "../../components/loaders/TypingLoader"
-import { prosConsStreamUseCase } from "../../../core/use-case"
+import { prosConsStreamGeneratorUseCase } from "../../../core/use-case"
+
 
 
 interface Message {
@@ -16,6 +17,8 @@ interface Message {
 
 const ProsConsStreamPage = () => {
 
+  const abortController = useRef( new AbortController() )
+
   const [Isloading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
 
@@ -25,33 +28,18 @@ const handlePost = async ( text: string) =>  {
 
   //TODO UseCAse
 
-  const reader = await prosConsStreamUseCase(text)
+  const stream = prosConsStreamGeneratorUseCase(text, abortController.current.signal)
   setIsLoading(false)
 
-  // Generar el ultimo mensaje
+  setMessages( (messages) => [ ...messages, { text: '', isGpt: true }])
 
-  if ( !reader ) return;
-
-  const decoder = new TextDecoder()
-  let message = ''
-  setMessages( (messages) => [ ...messages, { text: message, isGpt: true }])
-
-  while(true){
-    const { value, done} = await reader.read();
-
-    if(done) break;
-
-    const decodeChunk = decoder.decode( value, { stream: true })
-    message += decodeChunk
-
+  for await ( const text of stream ) {
     setMessages( (messages) =>{
-      const newMessages = [...messages]
-      newMessages[ newMessages.length - 1].text = message
-      return newMessages
-    })
-
+          const newMessages = [...messages]
+          newMessages[ newMessages.length - 1].text = text
+          return newMessages
+        })
   }
-
 
 }
 
