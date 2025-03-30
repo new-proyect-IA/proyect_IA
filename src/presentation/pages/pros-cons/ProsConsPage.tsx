@@ -17,7 +17,6 @@ const ProsConsPage = () => {
   const [Isloading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
 
-  console.log(messages)
 const handlePost = async ( text: string) =>  {
   setIsLoading(true)
   setMessages( (prev) => [...prev, { text: text, isGpt: false}])

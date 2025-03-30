@@ -1,5 +1,4 @@
 export interface ResposeProsCons {
-  data: {
-    constent: string;
-  };
+  role:string
+  content: string
 }
