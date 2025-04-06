@@ -18,12 +18,21 @@ interface Message {
 const ProsConsStreamPage = () => {
 
   const abortController = useRef( new AbortController() )
+  const isRunning = useRef(false)
 
   const [Isloading, setIsLoading] = useState(false)
   const [messages, setMessages] = useState<Message[]>([])
 
-const handlePost = async ( text: string) =>  {
+
+  const handlePost = async ( text: string) =>  {
+
+  if (isRunning.current){
+    abortController.current.abort();
+    abortController.current = new AbortController();
+  }  
+
   setIsLoading(true)
+  isRunning.current = true
   setMessages( (prev) => [...prev, { text: text, isGpt: false}])
 
   //TODO UseCAse
@@ -40,7 +49,7 @@ const handlePost = async ( text: string) =>  {
           return newMessages
         })
   }
-
+  isRunning.current = false
 }
 
 
